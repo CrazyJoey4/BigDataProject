@@ -1,2 +1,1 @@
-# BigDataProject
- 
+# This is a line from RStudio
