@@ -25,6 +25,7 @@ ListFile <-
 GPData = do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))
 GPData
 
+#Microbenchmark
 set.seed(2017)
 n <- 10000
 p <- 100
@@ -49,3 +50,7 @@ mbm
 
 autoplot(mbm)
 
+#Cluster Analysis
+set.seed(123)
+clustering <- kmeans(GPData, centers = 4, nstart = 20)
+clustering
