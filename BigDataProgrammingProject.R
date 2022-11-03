@@ -6,28 +6,46 @@ library(data.table)
 library(tidyverse)
 library(readr)
 library(magrittr)
+library(microbenchmark)
+
+install.packages("microbenchmark")
 
 #change directory
 setwd("~/BigData/BigDataProject")
-
 #import csv files
-
 #Grocery
-year_osward_grocery<-read.csv("./BigDataProject/Area-level grocery purchases/year_osward_grocery.csv")
-
+year_osward_grocery<-read.csv("./Area-level grocery purchases/year_osward_grocery.csv")
 #Health Data
 diabetes_estimates_osward_2016<-read.csv("./Validation data (obesity, diabetes)/diabetes_estimates_osward_2016.csv")
 
+#Import Grocery Purchases
+setwd("~/BigData/BigDataProject/Area-level grocery purchases")
+ListFile <- 
+  list.files(path=".", pattern="*.csv", all.files=TRUE, full.names=FALSE)
+GPData = do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))
+GPData
 
-# Using read.csv()
-list_csv_files <- list.files(path = "./Validation data (obesity, diabetes)/")
-df2 = do.call(rbind, lapply(list_csv_files, function(x) read.csv(x, stringsAsFactors = FALSE)))
-df2
+set.seed(2017)
+n <- 10000
+p <- 100
+X <- matrix(rnorm(n*p), n, p)
+y <- X %*% rnorm(p) + rnorm(100)
+check_for_equal_coefs <- function(values) {
+  tol <- 1e-12
+  max_error <- max(c(abs(values[[1]] - values[[2]]),
+                     abs(values[[2]] - values[[3]]),
+                     abs(values[[1]] - values[[3]])))
+  max_error < tol
+}
+mbm <- microbenchmark("lm" = { b <- lm(y ~ X + 0)$coef },
+                      "pseudoinverse" = {
+                        b <- solve(t(X) %*% X) %*% t(X) %*% y
+                      },
+                      "linear system" = {
+                        b <- solve(t(X) %*% X, t(X) %*% y)
+                      },
+                      check = check_for_equal_coefs)
+mbm
 
-df <-
-  list.files(path = "Validation data (obesity, diabetes)/", pattern = "*.csv") %>% 
-  map_df(~read_csv(.))
-df
-
-
+autoplot(mbm)
 
