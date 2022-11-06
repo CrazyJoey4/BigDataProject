@@ -20,7 +20,7 @@ install.packages("factoextra")
 install.packages("useful")
 
 #change directory
-setwd("~/BigData/BigDataProject")
+setwd("~/BigData")
 #import csv files
 #Grocery
 year_osward_grocery<-read.csv("./Area-level grocery purchases/year_osward_grocery.csv")
@@ -28,12 +28,10 @@ year_osward_grocery<-read.csv("./Area-level grocery purchases/year_osward_grocer
 diabetes_estimates_osward_2016<-read.csv("./Validation data (obesity, diabetes)/diabetes_estimates_osward_2016.csv")
 
 #Import Grocery Purchases
-setwd("~/BigData/BigDataProject/Area-level grocery purchases")
+setwd("~/BigData/Area-level grocery purchases")
 ListFile <- 
   list.files(path=".", pattern="*.csv", all.files=TRUE, full.names=FALSE)
 GPData = do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))
-
-
 
 
 #Microbenchmark (Sequential)
