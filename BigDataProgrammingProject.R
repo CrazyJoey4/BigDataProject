@@ -7,8 +7,17 @@ library(tidyverse)
 library(readr)
 library(magrittr)
 library(microbenchmark)
+library(parallel)
+library(lme4)
+library(cluster)
+library(factoextra)
+library(useful)
+
+gc()
 
 install.packages("microbenchmark")
+install.packages("factoextra")
+install.packages("useful")
 
 #change directory
 setwd("~/BigData/BigDataProject")
@@ -23,34 +32,36 @@ setwd("~/BigData/BigDataProject/Area-level grocery purchases")
 ListFile <- 
   list.files(path=".", pattern="*.csv", all.files=TRUE, full.names=FALSE)
 GPData = do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))
-GPData
 
-#Microbenchmark
-set.seed(2017)
-n <- 10000
-p <- 100
-X <- matrix(rnorm(n*p), n, p)
-y <- X %*% rnorm(p) + rnorm(100)
-check_for_equal_coefs <- function(values) {
-  tol <- 1e-12
-  max_error <- max(c(abs(values[[1]] - values[[2]]),
-                     abs(values[[2]] - values[[3]]),
-                     abs(values[[1]] - values[[3]])))
-  max_error < tol
-}
-mbm <- microbenchmark("lm" = { b <- lm(y ~ X + 0)$coef },
-                      "pseudoinverse" = {
-                        b <- solve(t(X) %*% X) %*% t(X) %*% y
-                      },
-                      "linear system" = {
-                        b <- solve(t(X) %*% X, t(X) %*% y)
-                      },
-                      check = check_for_equal_coefs)
+
+
+
+#Microbenchmark (Sequential)
+mbm <- microbenchmark("Time Taken by Sequential Process" = {do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))})
 mbm
-
 autoplot(mbm)
 
+#Microbenchmark (Parallel)
+
+cl <- makeCluster(getOption("cl.cores", 3))
+clusterEvalQ(cl, c(library(data.table)))
+clusterExport(cl, c("bindToEnv", "ccc"), 
+              envir=environment())
+f <- function(x) {
+  bindToEnv(objNames='ccc')
+  return(x+x)  
+}
+
+mbm2 <- microbenchmark("Time Taken by Parallel Process" = {do.call(rbind, parLapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))})
+mbm2
+autoplot(mbm2)
+
+
 #Cluster Analysis
-set.seed(123)
-clustering <- kmeans(GPData, centers = 4, nstart = 20)
+GP_weight <- GPData[2:9]
+
+clustering <- kmeans(x = GP_weight, centers = 3)
 clustering
+
+plot(clustering, data=GP_weight)
+
