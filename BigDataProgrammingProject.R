@@ -1,3 +1,8 @@
+install.packages("microbenchmark")
+install.packages("factoextra")
+install.packages("useful")
+install.packages("manipulate")
+
 library(dplyr)
 library(ggplot2)
 library(tidyverse)
@@ -12,12 +17,11 @@ library(lme4)
 library(cluster)
 library(factoextra)
 library(useful)
+library(ff)
+library(manipulate)
 
 gc()
 
-install.packages("microbenchmark")
-install.packages("factoextra")
-install.packages("useful")
 
 #change directory
 setwd("~/BigData")
@@ -41,14 +45,6 @@ autoplot(mbm)
 
 #Microbenchmark (Parallel)
 
-cl <- makeCluster(getOption("cl.cores", 3))
-clusterEvalQ(cl, c(library(data.table)))
-clusterExport(cl, c("bindToEnv", "ccc"), 
-              envir=environment())
-f <- function(x) {
-  bindToEnv(objNames='ccc')
-  return(x+x)  
-}
 
 mbm2 <- microbenchmark("Time Taken by Parallel Process" = {do.call(rbind, parLapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))})
 mbm2
@@ -56,10 +52,10 @@ autoplot(mbm2)
 
 
 #Cluster Analysis
-GP_weight <- GPData[2:9]
+GP_weight <- sample_n(GPData[, -which(names(GPData) == "area_id")], 77577, replace=T)
 
 clustering <- kmeans(x = GP_weight, centers = 3)
 clustering
 
-plot(clustering, data=GP_weight)
+plot(clustering)
 
