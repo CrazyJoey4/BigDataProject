@@ -52,10 +52,16 @@ autoplot(mbm2)
 
 
 #Cluster Analysis
-GP_weight <- sample_n(GPData[, -which(names(GPData) == "area_id")], 77577, replace=T)
+GP_data <- (GPData[, -which(names(GPData) == "area_id")])
+GP_cleansed <- scale(GP_data)
 
-clustering <- kmeans(x = GP_weight, centers = 3)
+clustering <- kmeans(x = GP_data, centers = 4, nstart = 25)
 clustering
 
 plot(clustering)
+fviz_cluster(clustering, data = GP_data)
+
+cl <- makeCluster(GPData[, -which(names(GPData) == "area_id")])
+
+mbm2 <- microbenchmark("Time Taken by Parallel Process" = {parLapply(clustering)})
 
