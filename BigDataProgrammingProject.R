@@ -38,30 +38,31 @@ ListFile <-
 GPData = do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))
 
 
-#Microbenchmark (Sequential)
-mbm <- microbenchmark("Time Taken by Sequential Process" = {do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))})
+#Sequential Process
+mbm <- microbenchmark("Sequential Process" = {do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))})
 mbm
 autoplot(mbm)
 
-#Microbenchmark (Parallel)
+Seqfunction <- function(x)
+{
+  do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))
+}
+
+Seq_TT <- system.time(Seqfunction())
 
 
-mbm2 <- microbenchmark("Time Taken by Parallel Process" = {do.call(rbind, parLapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))})
-mbm2
-autoplot(mbm2)
+#Parallel Process
+Parfunction <- function(y)
+{
+  cl_area <- detectCores(ListFile)
+  cl <- makeCluster(cl_area)        #takes in as an argument the number of cores
+  clusterEvalQ(cl, 2 + 2)           #takes a cluster and any expression, and executes the expression on each process
+  
+  clusterEvalQ(cl, {do.call(rbind, lapply(list.files(path=".", pattern="*.csv", all.files=TRUE, full.names=FALSE), function(x) read.csv(x, stringsAsFactors = FALSE)))})
+}
+
+Par_TT <- system.time(parLapply(cl, 1:100, Parfunction()))
 
 
-#Cluster Analysis
-GP_data <- (GPData[, -which(names(GPData) == "area_id")])
-GP_cleansed <- scale(GP_data)
 
-clustering <- kmeans(x = GP_data, centers = 4, nstart = 25)
-clustering
-
-plot(clustering)
-fviz_cluster(clustering, data = GP_data)
-
-cl <- makeCluster(GPData[, -which(names(GPData) == "area_id")])
-
-mbm2 <- microbenchmark("Time Taken by Parallel Process" = {parLapply(clustering)})
 
