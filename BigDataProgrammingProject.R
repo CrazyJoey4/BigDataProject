@@ -23,13 +23,8 @@ library(manipulate)
 
 #change directory
 setwd("~/BigData")
-#import csv files
-#Grocery
-year_osward_grocery<-read.csv("./Area-level grocery purchases/year_osward_grocery.csv")
-#Health Data
-diabetes_estimates_osward_2016<-read.csv("./Validation data (obesity, diabetes)/diabetes_estimates_osward_2016.csv")
 
-#Import Grocery Purchases
+#Import Data
 setwd("~/BigData/Area-level grocery purchases/Yearly")
 ListFile <- 
   list.files(path=".", pattern="*.csv", all.files=TRUE, full.names=FALSE)
@@ -71,8 +66,19 @@ Parfunction <- function(y)
   stopCluster(cl)
 }
 
-Par_TT <- system.time(parLapply(cl, 1:100, Parfunction()))
+Par_TT <- system.time(parLapply(cl, 1:100, YearFile))
 
-Par <- microbenchmark("Parallel " = {parLapply(cl, 1:100, AL_Grocery2)})
+Par <- microbenchmark("Parallel " = {parLapply(cl, 1:100, YearFile)})
 
+
+
+#Import Dataset
+#Grocery
+year_osward_grocery<-read.csv("~/BigData/Area-level grocery purchases/year_osward_grocery.csv")
+#Health Data
+diabetes_estimates_osward_2016<-read.csv("./Validation data (obesity, diabetes)/diabetes_estimates_osward_2016.csv")
+
+#Cleanse (Select required variables)
+year_osward_grocery
+diabetes_estimates_osward_2016
 
