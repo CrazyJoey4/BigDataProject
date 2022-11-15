@@ -58,12 +58,12 @@ YearFile <-
 
 YearFile
 
-cl_area <- detectCores(YearFile)
-cl <- makeCluster(cl_area)        #takes in as an argument the number of cores
+numCores <- detectCores()
+cl <- parallel::makeCluster(numCores)       #takes in as an argument the number of cores
 clusterEvalQ(cl, {
   library(ggplot2)
   library(stringr)
-  })                              #takes a cluster and any expression, and executes the expression on each process
+  })
   
 Parfunction <- function(y)
 {
