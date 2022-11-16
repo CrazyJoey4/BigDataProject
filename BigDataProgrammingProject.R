@@ -202,9 +202,6 @@ pairs.panels(Diabetes_Food[2:8], main = "Pairs Panels")
 
 
 #Linear Regression of Nutrients
-model <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$carb)
-print(model)
-
 #Carbohydrates
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$carb, 
      main = "Diabetes Prevalence vs Carbohydrates Regression model"
@@ -242,13 +239,20 @@ plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fibre,
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fibre))
 
 
-
 #Precode
 is.na(Diabetes_Food)
 sample_data = sample.split(Diabetes_Food, SplitRatio = 0.8)
 train_data <- subset(Diabetes_Food, sample_data == TRUE)
 test_data <- subset(Diabetes_Food, sample_data == FALSE)
 
+
+#Generate Linear Models
+model1 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$carb)
+model2 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$sugar)
+model3 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$fat)
+model4 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$saturate)
+model5 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$protein)
+model6 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$fibre)
 
 M_carb <- ctree(estimated_diabetes_prevalence ~ carb, train_data)
 M_sugar <- ctree(estimated_diabetes_prevalence ~ sugar, train_data)
@@ -257,8 +261,13 @@ M_saturate <- ctree(estimated_diabetes_prevalence ~ saturate, train_data)
 M_protein <- ctree(estimated_diabetes_prevalence ~ protein, train_data)
 M_fibre <- ctree(estimated_diabetes_prevalence ~ fibre, train_data)
 
+plot(model1)
+plot(model2)
+plot(model3)
+plot(model4)
+plot(model5)
+plot(model6)
 
-plot(M_sugar)
 print(model)
 print(summary(model))
 
