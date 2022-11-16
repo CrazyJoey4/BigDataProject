@@ -41,7 +41,6 @@ GPData = do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactor
 
 #Sequential Process
 Seq <- microbenchmark("Sequential Process" = {do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))})
-Seq
 autoplot(Seq)
 
 Seqfunction <- function(x)
@@ -58,7 +57,6 @@ YearFile <-
   list.files(path=".", pattern="*.csv", all.files=TRUE, full.names=FALSE) %>%
   map_df(~read_csv(.))
 
-YearFile
 
 numCores <- detectCores()
 cl <- parallel::makeCluster(numCores)       #takes in as an argument the number of cores
@@ -74,8 +72,9 @@ Parfunction <- function(y)
 }
 
 Par_TT <- system.time(parLapply(cl, 1:100, YearFile))
-
 Par <- microbenchmark("Parallel " = {parLapply(cl, 1:100, YearFile)})
+
+#Parallel does not work because of cluster
 
 
 
@@ -144,4 +143,4 @@ plot(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$carb,
      )
 
 
-abline(lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$carb + ))
+abline(lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$carb))
