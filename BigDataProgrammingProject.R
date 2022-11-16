@@ -102,7 +102,7 @@ Diabetes_Food <- Diabetes_Food %>% select(area_id, estimated_diabetes_prevalence
 view(Diabetes_Food)
 head(Diabetes_Food)
 
-
+#Calculate Correlation
 corNutrient <-c( 
   carbohydrates <- cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$carb),
   Sugar <- cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$sugar), 
@@ -114,6 +114,7 @@ corNutrient <-c(
 
 max(corNutrient)  #Carbs has the highest Correlation
 
+#Plotting Correlation
 corrplot(corr = cor(Diabetes_Food[2:8]),
          title = "Correlation Between Nutrients and Diabetes Prevalence",
          addCoef.col = "white",
@@ -129,5 +130,18 @@ corrplot(corr = cor(Diabetes_Food[2:8]),
          mar=c(0,0,2,0)
          )
 
+ggpairs(Diabetes_Food[2:8])
+
+pairs.panels(Diabetes_Food[2:8], main = "Pairs Panels")
+
+#Calculate Regression
+model <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$carb)
+print(model)
+
+plot(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$carb, 
+     main = "Diabetes Prevalence vs Carbohydrates Regression model",
+     
+     )
 
 
+abline(lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$carb + ))
