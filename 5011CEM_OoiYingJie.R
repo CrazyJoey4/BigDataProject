@@ -111,8 +111,8 @@ Diabetes_Food <- Diabetes_Food %>% select(area_id, estimated_diabetes_prevalence
 #To view
 view(Diabetes_Food)
 
-
-#Calculate Correlation
+#Correlation Calculation
+#Calculate Correlation between Nutrients and Diabetes Prevalence
 Ncorrelation <-c( 
   cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$carb),
   cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$sugar), 
@@ -122,44 +122,12 @@ Ncorrelation <-c(
   cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$fibre)
 )
 
-
-Fcorrelation <- c(
-  cor(Diabetes_Food$carb, Diabetes_Food$f_beer),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_dairy), 
-  cor(Diabetes_Food$carb, Diabetes_Food$f_fats_oils),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_fish),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_fruit_veg),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_grains),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_meat_red),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_poultry), 
-  cor(Diabetes_Food$carb, Diabetes_Food$f_readymade),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_sauces),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_soft_drinks),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_spirits),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_sweets),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_tea_coffee),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_water),
-  cor(Diabetes_Food$carb, Diabetes_Food$f_wine)
-)
-
 Nutrients <- c("Carbohydrates", "Sugar", "Fats", "Saturated Fat", "Protein", "Fibre")
-Category <- c("Beer", "Dairy", "Fats Oils", "Fish", "Fruit and Vegetables", "Grains", 
-         "Meat in Red", "Poultry", "Readymade", "Sauces", "Soft Drinks", "Spirits", "Sweets", "Tea and Coffee", "Water", "Wine")
-
 corNutrient <- cbind(Ncorrelation, Nutrients)
-corFood <- cbind(Fcorrelation, Category)
 
 #Top 3 in nutrient
 head(corNutrient[order(Ncorrelation, decreasing = TRUE), ], n=3)
-
-#Top 3 in Food Category that related to Carbohydrates
-head(corFood[order(Fcorrelation, decreasing = TRUE), ], n=3)
-
-
-
-nutrient_data <- Diabetes_Food %>% select(carb,f_beer, f_dairy, f_eggs, f_fats_oils, f_fish, f_fruit_veg, f_grains,
-                                          f_meat_red, f_poultry, f_readymade, f_sauces, f_soft_drinks,
-                                          f_spirits, f_sweets, f_tea_coffee, f_water, f_wine)
+# Carbohydrates | Sugar | Saturated Fat
 
 
 #Plotting Correlation
@@ -181,48 +149,51 @@ corrplot(corr = cor(Diabetes_Food[2:8]),
 ggpairs(Diabetes_Food[2:8])
 pairs.panels(Diabetes_Food[2:8], main = "Pairs Panels")
 
+
+#Calculate Correlation between Carbohydrates and Food Category
+Fcorrelation <- c(
+  cor(Diabetes_Food$carb, Diabetes_Food$f_beer),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_dairy), 
+  cor(Diabetes_Food$carb, Diabetes_Food$f_fats_oils),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_fish),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_fruit_veg),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_grains),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_meat_red),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_poultry), 
+  cor(Diabetes_Food$carb, Diabetes_Food$f_readymade),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_sauces),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_soft_drinks),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_spirits),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_sweets),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_tea_coffee),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_water),
+  cor(Diabetes_Food$carb, Diabetes_Food$f_wine)
+)
+
+Category <- c("Beer", "Dairy", "Fats Oils", "Fish", "Fruit and Vegetables", "Grains", 
+         "Meat in Red", "Poultry", "Readymade", "Sauces", "Soft Drinks", "Spirits", "Sweets", "Tea and Coffee", "Water", "Wine")
+
+corFood <- cbind(Fcorrelation, Category)
+
+
+#Top 3 in Food Category that related to Carbohydrates
+head(corFood[order(Fcorrelation, decreasing = TRUE), ], n=3)
+# Grains | Sweets | Soft Drinks
+
+
+food_data <- Diabetes_Food %>% select(f_beer, f_dairy, f_eggs, f_fats_oils, f_fish, f_fruit_veg, f_grains,
+                                          f_meat_red, f_poultry, f_readymade, f_sauces, f_soft_drinks,
+                                          f_spirits, f_sweets, f_tea_coffee, f_water, f_wine)
+
+
+
        
 
-# Histogram of nutrients Purchased
-ggplot(Diabetes_Food, mapping = aes(x = carb)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='white') + ggtitle("Carbohydrates") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = sugar)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Sugar") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = fat)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='orange') + ggtitle("Fat") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = saturate)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='red') + ggtitle("Saturated Fat") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = protein)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='yellow') + ggtitle("Protein") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = fibre)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='green') + ggtitle("Fibre") + labs(y = "grams")
+# Histogram of products purchased
+ggplot(food_data, mapping = aes(x = f_grains)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Grains weights in average products")
+ggplot(food_data, mapping = aes(x = f_soft_drinks)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Soft Drinks weights in average products")
+ggplot(food_data, mapping = aes(x = f_sweets)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Sweet weights in average products")
 
-
-
-# Scatter plots of Carbohydrates in Food Categories
-ggplot(nutrient_data, aes(carb, f_beer)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
-
-ggplot(nutrient_data, aes(carb, f_dairy)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
-
-ggplot(nutrient_data, aes(carb, f_eggs)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
-
-ggplot(nutrient_data, aes(carb, f_fats_oils)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
-
-ggplot(nutrient_data, aes(carb, f_fish)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
-
-ggplot(nutrient_data, aes(carb, f_fruit_oils)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
-
-ggplot(nutrient_data, aes(carb, f_grains)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
-
-ggplot(nutrient_data, aes(carb, f_fruit_oils)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates") 
-
-ggplot(nutrient_data, aes(carb, f_fish)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
-
-ggplot(nutrient_data, aes(carb, f_fruit_oils)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates") 
 
 # Plots of diabetes prevalence by nutrients
 ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, carb)) +
@@ -244,7 +215,15 @@ ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, fibre)) +
   geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Fibre")
 
 
+# Scatter plots of Carbohydrates in Food Categories
+ggplot(Diabetes_Food, aes(carb, f_grains)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
 
+ggplot(Diabetes_Food, aes(carb, f_sweets)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+
+ggplot(Diabetes_Food, aes(carb, f_soft_drinks)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates") 
 
 
 #Linear Regression of Nutrients
