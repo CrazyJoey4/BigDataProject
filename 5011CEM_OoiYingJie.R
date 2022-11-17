@@ -35,18 +35,13 @@ library(partykit)
 library(caTools)
 
 
-#change directory
-setwd("~/BigData")
-
 #Import Data
 setwd("~/BigData/Area-level grocery purchases/Yearly")
 ListFile <- 
   list.files(path=".", pattern="*.csv", all.files=TRUE, full.names=FALSE)
 
-GPData = do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))
 
-
-#Sequential Process
+#Sequential Process 
 Seq <- microbenchmark("Sequential Process" = {do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))})
 autoplot(Seq)
 
@@ -57,35 +52,42 @@ Seqfunction <- function(x)
 
 system.time(Seq_TT <- Seqfunction())
 
+#Parallel Process (mclapply)
+Par <- microbenchmark("Parallel Process" = {do.call(rbind, mclapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))})
+autoplot(Par)
 
-#Parallel Process
+Parfunction <- function(y)
+{
+  do.call(rbind, mclapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))
+}
+
+system.time(Par_TT <- Parfunction())
+
+##### 
+#Parallel Process (parLapply)
 setwd("~/BigData/Area-level grocery purchases/Yearly")
 YearFile <- 
   list.files(path=".", pattern="*.csv", all.files=TRUE, full.names=FALSE) %>%
   map_df(~read_csv(.))
-
 YearFile <- select_if(YearFile, is.numeric)
-
-
-
 numCores <- detectCores()
 cl <- parallel::makeCluster(numCores)       #takes in as an argument the number of cores
 clusterEvalQ(cl, {
   library(ggplot2)
   library(stringr)
-  })
-  
+})
+
 Parfunction <- function(y)
 {
   parLapply(cl, 1:100, YearFile)
   stopCluster(cl)
 }
-
 Par_TT <- system.time(parLapply(cl, 1:100, YearFile))
 Par <- microbenchmark("Parallel " = {parLapply(cl, 1:100, YearFile)})
 
 #Parallel does not work because of cluster
 
+#####
 
 
 
@@ -147,7 +149,6 @@ corrplot(corr = cor(Diabetes_Food[2:8]),
 )
 
 ggpairs(Diabetes_Food[2:8])
-pairs.panels(Diabetes_Food[2:8], main = "Pairs Panels")
 
 
 #Calculate Correlation between Carbohydrates and Food Category
@@ -171,7 +172,8 @@ Fcorrelation <- c(
 )
 
 Category <- c("Beer", "Dairy", "Fats Oils", "Fish", "Fruit and Vegetables", "Grains", 
-         "Meat in Red", "Poultry", "Readymade", "Sauces", "Soft Drinks", "Spirits", "Sweets", "Tea and Coffee", "Water", "Wine")
+         "Meat in Red", "Poultry", "Readymade", "Sauces", "Soft Drinks", "Spirits", "Sweets", 
+         "Tea and Coffee", "Water", "Wine")
 
 corFood <- cbind(Fcorrelation, Category)
 
@@ -185,9 +187,10 @@ food_data <- Diabetes_Food %>% select(f_beer, f_dairy, f_eggs, f_fats_oils, f_fi
                                           f_meat_red, f_poultry, f_readymade, f_sauces, f_soft_drinks,
                                           f_spirits, f_sweets, f_tea_coffee, f_water, f_wine)
 
+food_data <- pivot_longer(food_data, f_beer:f_wine, names_to = "Category", values_to = "fraction")
 
 
-       
+
 
 # Histogram of products purchased
 ggplot(food_data, mapping = aes(x = f_grains)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Grains weights in average products")
@@ -215,7 +218,7 @@ ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, fibre)) +
   geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Fibre")
 
 
-# Scatter plots of Carbohydrates in Food Categories
+# Scatter plots of Carbohydrates in Top 3 Food Categories
 ggplot(Diabetes_Food, aes(carb, f_grains)) +
   geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
 
@@ -293,7 +296,13 @@ plot(model4)
 plot(model5)
 plot(model6)
 
-print(model)
-print(summary(model))
+plot(M_carb)
+plot(M_sugar)
+plot(M_fat)
+plot(M_saturate)
+plot(M_protein)
+plot(M_fibre)
+
+print(summary(model1))
 
 
