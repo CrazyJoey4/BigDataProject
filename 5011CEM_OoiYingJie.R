@@ -139,7 +139,7 @@ head(corNutrient[order(Ncorrelation, decreasing = TRUE), ], n=3)
 
 #Plotting Correlation
 corrplot(corr = cor(Diabetes_Food[2:8]),
-         title = "Correlation Between Nutrients and Diabetes Patient Count",
+         title = "Correlation Between Nutrients and Estimate Diabetes Prevalence",
          addCoef.col = "white",
          number.cex = 0.8,
          number.digits = 1,
@@ -195,12 +195,20 @@ food_data <- Diabetes_Food %>% select(f_beer, f_dairy, f_eggs, f_fats_oils, f_fi
 food_data <- pivot_longer(food_data, f_beer:f_wine, names_to = "Category", values_to = "fraction")
 
 
+# Strip chart of products purchased
+stripchart(fraction~Category,
+           data=food_data,
+           main="Food Categories Purchased",
+           xlab="Food Category",
+           ylab="Fraction Purchased",
+           col=rainbow(17),
+           group.names=c("Beer","Dairy","Eggs","FatsOils","Fish", "Fruit&Vege", "Grains", "MeatRed", "Poultry",
+                         "Readymade", "Sauces", "Soft Drinks", "Spirits", "Sweets", "Tea&Coffee", "Water", "Wine"),
+           vertical=TRUE,
+           pch=16,
+           mar=c(0,0,2,0)
+)
 
-
-# Histogram of products purchased
-ggplot(food_data, mapping = aes(x = f_grains)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Grains weights in average products")
-ggplot(food_data, mapping = aes(x = f_soft_drinks)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Soft Drinks weights in average products")
-ggplot(food_data, mapping = aes(x = f_sweets)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Sweet weights in average products")
 
 
 # Plots of diabetes prevalence by nutrients
@@ -208,7 +216,7 @@ ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, carb)) +
   geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Carbohydrates")
 
 ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, sugar)) +
-  geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Carbohydrates Sugar")
+  geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Sugar")
 
 ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, fat)) +
   geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Fat")
@@ -225,13 +233,13 @@ ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, fibre)) +
 
 # Scatter plots of Carbohydrates in Top 3 Food Categories
 ggplot(Diabetes_Food, aes(carb, f_grains)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+  geom_point(size = 1.5, shape = 9) + ggtitle("Carbohydrates by Grains")  
 
 ggplot(Diabetes_Food, aes(carb, f_sweets)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+  geom_point(size = 1.5, shape = 9) + ggtitle("Carbohydrates by Sweets")  
 
 ggplot(Diabetes_Food, aes(carb, f_soft_drinks)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates") 
+  geom_point(size = 1.5, shape = 9) + ggtitle("Carbohydrates by Soft Drinks") 
 
 
 #Linear Regression of Nutrients
