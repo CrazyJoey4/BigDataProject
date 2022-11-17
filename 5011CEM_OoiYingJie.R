@@ -63,6 +63,11 @@ Parfunction <- function(y)
 
 system.time(Par_TT <- Parfunction())
 
+
+compare <- microbenchmark("Sequential Process" = {do.call(rbind, lapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))},
+               "Parallel Process" = {do.call(rbind, mclapply(ListFile, function(x) read.csv(x, stringsAsFactors = FALSE)))}
+               )
+autoplot(compare)
 ##### 
 #Parallel Process (parLapply)
 setwd("~/BigData/Area-level grocery purchases/Yearly")
