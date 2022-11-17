@@ -6,7 +6,11 @@ install.packages("ggplot2")
 install.packages("corrgram")
 install.packages("psych")
 install.packages("partykit")
+install.packages("ggplot")
+install.packages("dplyr")
+install.packages("tidyverse")
 
+library(rlang)
 library(dplyr)
 library(ggplot)
 library(ggplot2)
@@ -60,6 +64,9 @@ YearFile <-
   list.files(path=".", pattern="*.csv", all.files=TRUE, full.names=FALSE) %>%
   map_df(~read_csv(.))
 
+YearFile <- select_if(YearFile, is.numeric)
+
+
 
 numCores <- detectCores()
 cl <- parallel::makeCluster(numCores)       #takes in as an argument the number of cores
@@ -82,7 +89,7 @@ Par <- microbenchmark("Parallel " = {parLapply(cl, 1:100, YearFile)})
 
 
 
-
+# To identify which food category has the highest effect in diabetes level
 
 #Import Dataset
 #Grocery
@@ -91,42 +98,32 @@ year_osward_grocery<-read.csv("~/BigData/Area-level grocery purchases/year_oswar
 diabetes_estimates_osward_2016<-read.csv("~/BigData/Validation data (obesity, diabetes)/diabetes_estimates_osward_2016.csv")
 
 #Cleanse (Select required variables)
-year_osward_grocery
-diabetes_estimates_osward_2016
-
-view(year_osward_grocery)
-view(diabetes_estimates_osward_2016)
-
 Diabetes_Food <- merge(diabetes_estimates_osward_2016, year_osward_grocery, 
                        by.x = "area_id")
 
-Diabetes_Food <- Diabetes_Food %>% select(area_id, estimated_diabetes_prevalence, gp_patients_diabetes, 
+Diabetes_Food <- Diabetes_Food %>% select(area_id, estimated_diabetes_prevalence, 
                                         carb, sugar, fat, saturate, protein, fibre,
                                         f_beer, f_dairy, f_eggs, f_fats_oils, f_fish, f_fruit_veg, f_grains,
                                         f_meat_red, f_poultry, f_readymade, f_sauces, f_soft_drinks,
                                         f_spirits, f_sweets, f_tea_coffee, f_water, f_wine
 )
 
-
+#To view
 view(Diabetes_Food)
-head(Diabetes_Food)
 
 
 #Calculate Correlation
-corNutrient <-c( 
+Ncorrelation <-c( 
   cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$carb),
   cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$sugar), 
   cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$fat),
   cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$saturate),
   cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$protein),
-  cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$fibre),
+  cor(Diabetes_Food$estimated_diabetes_prevalence, Diabetes_Food$fibre)
 )
 
-longer_data <- survey_data %>%
-  pivot_longer(Q1:Q6, names_to = "question", values_to = "response")
-print(longer_data)
 
-corFood <- c(
+Fcorrelation <- c(
   cor(Diabetes_Food$carb, Diabetes_Food$f_beer),
   cor(Diabetes_Food$carb, Diabetes_Food$f_dairy), 
   cor(Diabetes_Food$carb, Diabetes_Food$f_fats_oils),
@@ -145,43 +142,29 @@ corFood <- c(
   cor(Diabetes_Food$carb, Diabetes_Food$f_wine)
 )
 
-max(corNutrient)  #Carbohydrates has the highest Correlation with Diabetes Prevalence
-max(corFood)      #Carbohydrates has the highest Correlation with Diabetes Prevalence
+Nutrients <- c("Carbohydrates", "Sugar", "Fats", "Saturated Fat", "Protein", "Fibre")
+Category <- c("Beer", "Dairy", "Fats Oils", "Fish", "Fruit and Vegetables", "Grains", 
+         "Meat in Red", "Poultry", "Readymade", "Sauces", "Soft Drinks", "Spirits", "Sweets", "Tea and Coffee", "Water", "Wine")
+
+corNutrient <- cbind(Ncorrelation, Nutrients)
+corFood <- cbind(Fcorrelation, Category)
+
+#Top 3 in nutrient
+head(corNutrient[order(Ncorrelation, decreasing = TRUE), ], n=3)
+
+#Top 3 in Food Category that related to Carbohydrates
+head(corFood[order(Fcorrelation, decreasing = TRUE), ], n=3)
 
 
 
-# Histogram of nutrients
-ggplot(Diabetes_Food, mapping = aes(x = carb)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='white') + ggtitle("Carbohydrates") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = sugar)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Sugar") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = fat)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='orange') + ggtitle("Fat") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = saturate)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='red') + ggtitle("Saturated Fat") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = protein)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='yellow') + ggtitle("Protein") + labs(y = "grams")
-ggplot(Diabetes_Food, mapping = aes(x = fibre)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='green') + ggtitle("Fibre") + labs(y = "grams")
-
-
-# Plots of diabetes prevalence by nutrients
-ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, carb, sugar)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Diabetes Prevalence by Carbohydrates")
-
-ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, sugar)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Diabetes Prevalence by Carbohydrates Sugar")
-
-ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, fat)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Diabetes Prevalence by Fat")
-
-ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, saturate)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Diabetes Prevalence by Saturated Fat")
-
-ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, protein)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Diabetes Prevalence by Protein")
-
-ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, fibre)) +
-  geom_point(size = 1.5, shape = 9) + ggtitle("Diabetes Prevalence by Fibre")
+nutrient_data <- Diabetes_Food %>% select(carb,f_beer, f_dairy, f_eggs, f_fats_oils, f_fish, f_fruit_veg, f_grains,
+                                          f_meat_red, f_poultry, f_readymade, f_sauces, f_soft_drinks,
+                                          f_spirits, f_sweets, f_tea_coffee, f_water, f_wine)
 
 
 #Plotting Correlation
 corrplot(corr = cor(Diabetes_Food[2:8]),
-         title = "Correlation Between Nutrients and Diabetes Prevalence",
+         title = "Correlation Between Nutrients and Diabetes Patient Count",
          addCoef.col = "white",
          number.cex = 0.8,
          number.digits = 1,
@@ -193,11 +176,74 @@ corrplot(corr = cor(Diabetes_Food[2:8]),
          tl.pos = "td",
          order = "original",
          mar=c(0,0,2,0)
-         )
+)
 
 ggpairs(Diabetes_Food[2:8])
-
 pairs.panels(Diabetes_Food[2:8], main = "Pairs Panels")
+
+       
+
+# Histogram of nutrients Purchased
+ggplot(Diabetes_Food, mapping = aes(x = carb)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='white') + ggtitle("Carbohydrates") + labs(y = "grams")
+ggplot(Diabetes_Food, mapping = aes(x = sugar)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='grey') + ggtitle("Sugar") + labs(y = "grams")
+ggplot(Diabetes_Food, mapping = aes(x = fat)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='orange') + ggtitle("Fat") + labs(y = "grams")
+ggplot(Diabetes_Food, mapping = aes(x = saturate)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='red') + ggtitle("Saturated Fat") + labs(y = "grams")
+ggplot(Diabetes_Food, mapping = aes(x = protein)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='yellow') + ggtitle("Protein") + labs(y = "grams")
+ggplot(Diabetes_Food, mapping = aes(x = fibre)) + geom_histogram(na.rm = TRUE, bins = 50, colour='black', fill='green') + ggtitle("Fibre") + labs(y = "grams")
+
+
+
+# Scatter plots of Carbohydrates in Food Categories
+ggplot(nutrient_data, aes(carb, f_beer)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+
+ggplot(nutrient_data, aes(carb, f_dairy)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+
+ggplot(nutrient_data, aes(carb, f_eggs)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+
+ggplot(nutrient_data, aes(carb, f_fats_oils)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+
+ggplot(nutrient_data, aes(carb, f_fish)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+
+ggplot(nutrient_data, aes(carb, f_fruit_oils)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+
+ggplot(nutrient_data, aes(carb, f_grains)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+
+ggplot(nutrient_data, aes(carb, f_fruit_oils)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates") 
+
+ggplot(nutrient_data, aes(carb, f_fish)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates")  
+
+ggplot(nutrient_data, aes(carb, f_fruit_oils)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Beer Nutrient by Carbohydrates") 
+
+# Plots of diabetes prevalence by nutrients
+ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, carb)) +
+  geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Carbohydrates")
+
+ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, sugar)) +
+  geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Carbohydrates Sugar")
+
+ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, fat)) +
+  geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Fat")
+
+ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, saturate)) +
+  geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Saturated Fat")
+
+ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, protein)) +
+  geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Protein")
+
+ggplot(Diabetes_Food, aes(estimated_diabetes_prevalence, fibre)) +
+  geom_point(size = 1.5, shape = 19) + ggtitle("Diabetes Prevalence by Fibre")
+
+
 
 
 
@@ -239,7 +285,7 @@ plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fibre,
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fibre))
 
 
-#Precode
+#Pre-code
 is.na(Diabetes_Food)
 sample_data = sample.split(Diabetes_Food, SplitRatio = 0.8)
 train_data <- subset(Diabetes_Food, sample_data == TRUE)
