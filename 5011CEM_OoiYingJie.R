@@ -245,37 +245,59 @@ ggplot(Diabetes_Food, aes(carb, f_soft_drinks)) +
 #Linear Regression of Nutrients
 #Carbohydrates
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$carb, 
-     main = "Diabetes Prevalence vs Carbohydrates Regression model"
+     main = "Diabetes Prevalence vs Carbohydrates Regression model",
+     col="brown2", pch = 19,
+     xlab="Carbohydrates",
+     ylab="Estimated Diabetes Prevalence"
      )
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$carb))
 
+
 #Sugar
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$sugar, 
-     main = "Diabetes Prevalence vs Carbohydrates Regression model"
+     main = "Diabetes Prevalence vs Sugar Regression model",
+     col="blue2", pch = 19,
+     xlab="Sugar",
+     ylab="Estimated Diabetes Prevalence"
 )
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$sugar))
 
+
 #Fat
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fat, 
-     main = "Diabetes Prevalence vs Carbohydrates Regression model"
+     main = "Diabetes Prevalence vs Fat Regression model",
+     col="blue3", pch = 19,
+     xlab="Fat",
+     ylab="Estimated Diabetes Prevalence"
 )
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fat))
 
+
 #Saturated Fat
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$saturate, 
-     main = "Diabetes Prevalence vs Carbohydrates Regression model"
+     main = "Diabetes Prevalence vs Saturated Fat Regression model",
+     col="blue4", pch = 19,
+     xlab="Saturated Fat",
+     ylab="Estimated Diabetes Prevalence"
 )
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$saturate))
 
 #Protein
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$protein, 
-     main = "Diabetes Prevalence vs Carbohydrates Regression model"
+     main = "Diabetes Prevalence vs Protein Regression model",
+     col="purple1", pch = 19,
+     xlab="Protein",
+     ylab="Estimated Diabetes Prevalence"
 )
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$protein))
 
+
 #Fibre
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fibre, 
-     main = "Diabetes Prevalence vs Carbohydrates Regression model"
+     main = "Diabetes Prevalence vs Fibre Regression model",
+     col="purple2", pch = 19,
+     xlab="Fibre",
+     ylab="Estimated Diabetes Prevalence"
 )
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fibre))
 
@@ -296,5 +318,9 @@ plot(model5)
 plot(model6)
 
 print(summary(model1))
-
+print(summary(model2))
+print(summary(model3))
+print(summary(model4))
+print(summary(model5))
+print(summary(model6))
 
