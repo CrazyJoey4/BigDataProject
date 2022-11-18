@@ -246,7 +246,7 @@ ggplot(Diabetes_Food, aes(carb, f_soft_drinks)) +
 #Carbohydrates
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$carb, 
      main = "Diabetes Prevalence vs Carbohydrates Regression model",
-     col="brown2", pch = 19,
+     col="blue1", pch = 19,
      xlab="Carbohydrates",
      ylab="Estimated Diabetes Prevalence"
      )
@@ -263,52 +263,53 @@ plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$sugar,
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$sugar))
 
 
-#Fat
-plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fat, 
-     main = "Diabetes Prevalence vs Fat Regression model",
-     col="blue3", pch = 19,
-     xlab="Fat",
-     ylab="Estimated Diabetes Prevalence"
-)
-abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fat))
-
-
 #Saturated Fat
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$saturate, 
      main = "Diabetes Prevalence vs Saturated Fat Regression model",
-     col="blue4", pch = 19,
+     col="blue3", pch = 19,
      xlab="Saturated Fat",
      ylab="Estimated Diabetes Prevalence"
 )
 abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$saturate))
 
-#Protein
-plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$protein, 
-     main = "Diabetes Prevalence vs Protein Regression model",
+
+#Grains
+plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$f_grains, 
+     main = "Diabetes Prevalence vs Grains Regression model",
      col="purple1", pch = 19,
-     xlab="Protein",
+     xlab="Grains",
      ylab="Estimated Diabetes Prevalence"
 )
-abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$protein))
+abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$f_grains))
 
 
-#Fibre
-plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fibre, 
-     main = "Diabetes Prevalence vs Fibre Regression model",
+#Sweets
+plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$f_sweets, 
+     main = "Diabetes Prevalence vs Sweets Regression model",
      col="purple2", pch = 19,
-     xlab="Fibre",
+     xlab="Sweets",
      ylab="Estimated Diabetes Prevalence"
 )
-abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$fibre))
+abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$f_sweets))
+
+
+#Soft Drinks
+plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$f_soft_drinks, 
+     main = "Diabetes Prevalence vs Soft Drinks Regression model",
+     col="purple3", pch = 19,
+     xlab="Soft Drinks",
+     ylab="Estimated Diabetes Prevalence"
+)
+abline(lm(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$f_soft_drinks))
 
 
 #Generate Linear Regression Models
 model1 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$carb)
 model2 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$sugar)
-model3 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$fat)
-model4 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$saturate)
-model5 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$protein)
-model6 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$fibre)
+model3 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$saturate)
+model4 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$f_grains)
+model5 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$f_sweets)
+model6 <- lm(Diabetes_Food$estimated_diabetes_prevalence~Diabetes_Food$f_soft_drinks)
 
 plot(model1)
 plot(model2)
