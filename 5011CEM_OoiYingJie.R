@@ -306,6 +306,30 @@ ggplot(Diabetes_Food, aes(carb, f_soft_drinks)) +
   geom_point(size = 1.5, shape = 9) + ggtitle("Carbohydrates by Soft Drinks") 
 
 
+
+# Scatter plots of Sugar in Top 3 Food Categories
+ggplot(Diabetes_Food, aes(sugar, f_sweets)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Sugar by Sweets")  
+
+ggplot(Diabetes_Food, aes(sugar, f_grains)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Sugar by Grains")  
+
+ggplot(Diabetes_Food, aes(sugar, f_soft_drinks)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Sugar by Readymade") 
+
+
+
+# Scatter plots of Saturated Fat in Top 3 Food Categories
+ggplot(Diabetes_Food, aes(saturate, f_sweets)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Saturated Fat by Sweets")
+
+ggplot(Diabetes_Food, aes(saturate, f_grains)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Saturated Fat by Grains")  
+
+ggplot(Diabetes_Food, aes(saturate, f_soft_drinks)) +
+  geom_point(size = 1.5, shape = 9) + ggtitle("Saturated Fat by Soft Drinks") 
+
+
 #Linear Regression of Nutrients
 #Carbohydrates
 plot(Diabetes_Food$estimated_diabetes_prevalence ~ Diabetes_Food$carb, 
