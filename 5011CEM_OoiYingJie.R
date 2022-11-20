@@ -188,12 +188,76 @@ head(corFood[order(Fcorrelation, decreasing = TRUE), ], n=3)
 # Grains | Sweets | Soft Drinks
 
 
+#Calculate Correlation between Sugar and Food Category
+Fcorrelation2 <- c(
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_beer),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_dairy), 
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_fats_oils),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_fish),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_fruit_veg),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_grains),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_meat_red),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_poultry), 
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_readymade),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_sauces),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_soft_drinks),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_spirits),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_sweets),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_tea_coffee),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_water),
+  cor(Diabetes_Food$sugar, Diabetes_Food$f_wine)
+)
+
+Category <- c("Beer", "Dairy", "Fats Oils", "Fish", "Fruit and Vegetables", "Grains", 
+              "Meat in Red", "Poultry", "Readymade", "Sauces", "Soft Drinks", "Spirits", "Sweets", 
+              "Tea and Coffee", "Water", "Wine")
+corFood2 <- cbind(Fcorrelation2, Category)
+
+
+#Top 3 in Food Category that related to Sugar
+head(corFood2[order(Fcorrelation2, decreasing = TRUE), ], n=3)
+# Sweets | Grains | Readymade
+
+
+#Calculate Correlation between Saturated Fat and Food Category
+Fcorrelation3 <- c(
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_beer),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_dairy), 
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_fats_oils),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_fish),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_fruit_veg),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_grains),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_meat_red),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_poultry), 
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_readymade),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_sauces),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_soft_drinks),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_spirits),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_sweets),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_tea_coffee),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_water),
+  cor(Diabetes_Food$saturate, Diabetes_Food$f_wine)
+)
+
+Category <- c("Beer", "Dairy", "Fats Oils", "Fish", "Fruit and Vegetables", "Grains", 
+              "Meat in Red", "Poultry", "Readymade", "Sauces", "Soft Drinks", "Spirits", "Sweets", 
+              "Tea and Coffee", "Water", "Wine")
+corFood3 <- cbind(Fcorrelation3, Category)
+
+
+#Top 3 in Food Category that related to Saturated Fat
+head(corFood3[order(Fcorrelation3, decreasing = TRUE), ], n=3)
+# Sweets | Grains | Soft Drinks
+
+
+
+
+#Food Purchased by consumer
 food_data <- Diabetes_Food %>% select(f_beer, f_dairy, f_eggs, f_fats_oils, f_fish, f_fruit_veg, f_grains,
                                           f_meat_red, f_poultry, f_readymade, f_sauces, f_soft_drinks,
                                           f_spirits, f_sweets, f_tea_coffee, f_water, f_wine)
 
 food_data <- pivot_longer(food_data, f_beer:f_wine, names_to = "Category", values_to = "fraction")
-
 
 # Strip chart of products purchased
 stripchart(fraction~Category,
